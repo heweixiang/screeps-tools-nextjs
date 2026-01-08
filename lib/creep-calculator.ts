@@ -201,9 +201,9 @@ export const BOOST_DESCRIPTIONS: Record<BoostType, string> = {
   KHO2: '远攻×3',
   XKHO2: '远攻×4',
   // Build/repair
-  LH: '建造×1.5',
-  LH2O: '建造×1.8',
-  XLH2O: '建造×2',
+  LH: '修建×1.5',
+  LH2O: '修建×1.8',
+  XLH2O: '修建×2',
   // Heal
   LO: '治疗×2',
   LHO2: '治疗×3',

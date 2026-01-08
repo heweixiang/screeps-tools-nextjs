@@ -3,94 +3,223 @@ import { tools } from '@/lib/tools'
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen screeps-bg">
+      {/* Grid Background */}
+      <div className="grid-bg" />
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* 背景装饰 */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+      <section className="relative pt-36 pb-24 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Glowing orbs */}
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl animate-pulse-glow" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
+          
+          {/* Floating particles */}
+          <div className="absolute top-32 left-[15%] w-2 h-2 bg-indigo-400/60 rounded-full animate-float" />
+          <div className="absolute top-48 right-[20%] w-1.5 h-1.5 bg-purple-400/50 rounded-full animate-float" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-64 left-[10%] w-1 h-1 bg-blue-400/40 rounded-full animate-float" style={{ animationDelay: '2s' }} />
+          <div className="absolute bottom-32 right-[15%] w-2 h-2 bg-indigo-300/50 rounded-full animate-float" style={{ animationDelay: '0.5s' }} />
+          <div className="absolute bottom-48 left-[25%] w-1.5 h-1.5 bg-purple-300/40 rounded-full animate-float" style={{ animationDelay: '1.5s' }} />
+          
+          {/* Geometric shapes */}
+          <div className="absolute top-40 right-[10%] w-20 h-20 border border-indigo-500/20 rounded-lg rotate-45 animate-spin-slow" />
+          <div className="absolute bottom-40 left-[8%] w-16 h-16 border border-purple-500/15 rounded-full animate-pulse-glow" />
+          
+          {/* Connection lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#6366f1" stopOpacity="0" />
+                <stop offset="50%" stopColor="#6366f1" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <line x1="10%" y1="30%" x2="30%" y2="50%" stroke="url(#line-gradient)" strokeWidth="1" />
+            <line x1="70%" y1="20%" x2="90%" y2="40%" stroke="url(#line-gradient)" strokeWidth="1" />
+            <line x1="80%" y1="60%" x2="95%" y2="80%" stroke="url(#line-gradient)" strokeWidth="1" />
+          </svg>
         </div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent mb-4">
-              Screeps 工具箱
-            </h1>
-            <p className="text-lg text-gray-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            {/* Logo Style Title */}
+            <div className="flex items-center justify-center space-x-2 mb-8">
+              <span className="text-gray-500 text-5xl sm:text-6xl lg:text-7xl font-light opacity-60">&lt;</span>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold gradient-text-blue glow-text">
+                Screeps
+              </h1>
+              <span className="text-gray-500 text-5xl sm:text-6xl lg:text-7xl font-light opacity-60">&gt;</span>
+              <span className="text-5xl sm:text-6xl lg:text-7xl font-light text-gray-300 ml-2">Tools</span>
+            </div>
+            
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
               为 Screeps 玩家打造的实用工具集合
             </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link 
+                href="/tools" 
+                className="group px-8 py-3.5 btn-primary rounded-xl font-medium text-white flex items-center space-x-2"
+              >
+                <span>浏览工具</span>
+                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+              <a 
+                href="https://screeps.com" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-3.5 btn-secondary rounded-xl font-medium text-gray-300"
+              >
+                了解 Screeps
+              </a>
+            </div>
           </div>
 
+          {/* Scroll indicator */}
+        </div>
+      </section>
+
+      {/* Tools Section */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Tools Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {tools.map((tool) => (
-            <Link 
-              key={tool.id} 
-              href={tool.href === '#' ? '#' : tool.href}
-              className={`group relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-xl border border-gray-700/50 overflow-hidden transition-all duration-300 ${
-                tool.href === '#' 
-                  ? 'cursor-not-allowed opacity-60' 
-                  : 'cursor-pointer hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1'
-              }`}
-            >
-              {/* 卡片顶部装饰条 */}
-              <div className={`h-1 bg-gradient-to-r ${
-                tool.statusColor === 'green' 
-                  ? 'from-green-500 to-emerald-500' 
-                  : tool.statusColor === 'blue'
-                  ? 'from-blue-500 to-cyan-500'
-                  : 'from-gray-500 to-gray-600'
-              }`} />
-              
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl font-semibold group-hover:text-purple-300 transition-colors">
-                    {tool.name}
-                  </h3>
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    tool.statusColor === 'green' 
-                      ? 'bg-green-500/20 text-green-400' 
-                      : tool.statusColor === 'blue'
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-gray-500/20 text-gray-400'
-                  }`}>
-                    {tool.status}
-                  </span>
-                </div>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  {tool.description}
-                </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tools.map((tool, index) => (
+              <Link 
+                key={tool.id} 
+                href={tool.href === '#' ? '#' : tool.href}
+                className={`group relative bg-gray-800/40 backdrop-blur-sm rounded-2xl overflow-hidden ${
+                  tool.href === '#' 
+                    ? 'cursor-not-allowed opacity-50' 
+                    : 'cursor-pointer card-hover'
+                }`}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {/* Top Accent Line */}
+                <div className={`h-1 ${
+                  tool.statusColor === 'green' 
+                    ? 'bg-gradient-to-r from-green-500 via-emerald-400 to-green-500' 
+                    : tool.statusColor === 'blue'
+                    ? 'bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500'
+                    : 'bg-gradient-to-r from-gray-600 via-gray-500 to-gray-600'
+                }`} />
                 
-                {/* 悬停时显示的箭头 */}
-                {tool.href !== '#' && (
-                  <div className="mt-4 flex items-center text-purple-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span>开始使用</span>
-                    <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="text-xl font-semibold text-gray-200 group-hover:text-white transition-colors">
+                      {tool.name}
+                    </h3>
+                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                      tool.statusColor === 'green' 
+                        ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                        : tool.statusColor === 'blue'
+                        ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
+                        : 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
+                    }`}>
+                      {tool.status}
+                    </span>
                   </div>
-                )}
+                  <p className="text-gray-500 text-sm leading-relaxed mb-6">
+                    {tool.description}
+                  </p>
+                  
+                  {/* Hover Arrow */}
+                  {tool.href !== '#' && (
+                    <div className="flex items-center text-indigo-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all">
+                      <span>开始使用</span>
+                      <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+              </Link>
+            ))}
+
+            {/* Coming Soon Card */}
+            <div className="relative bg-gray-800/20 backdrop-blur-sm rounded-2xl border border-dashed border-gray-700/50 p-6 flex flex-col items-center justify-center min-h-[220px]">
+              <div className="w-14 h-14 rounded-full bg-gray-800/50 flex items-center justify-center mb-4 border border-gray-700/50">
+                <svg className="w-7 h-7 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
               </div>
-            </Link>
-          ))}
+              <p className="text-gray-600 text-sm">更多工具开发中...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-24 relative">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/2 left-0 w-72 h-72 bg-indigo-500/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-12">
+            <p className="text-indigo-400 text-sm font-medium mb-3 tracking-wider uppercase">开源项目</p>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+              <span className="gradient-text-blue">Open</span>
+              <span className="text-gray-300 ml-3">Source</span>
+            </h2>
           </div>
 
-          {/* 底部链接 */}
-          <div className="flex justify-center gap-4">
-            <Link 
-              href="/tools" 
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 rounded-lg font-medium transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40"
-            >
-              浏览全部工具
-            </Link>
+          {/* Feature Cards */}
+          <div className="grid sm:grid-cols-3 gap-6 mb-10">
+            <div className="bg-gray-800/40 backdrop-blur-sm rounded-2xl p-6 border border-indigo-500/10 card-hover text-center">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-indigo-500/10 flex items-center justify-center">
+                <svg className="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+              </div>
+              <h3 className="text-gray-200 font-medium mb-2">完全开源</h3>
+              <p className="text-gray-500 text-sm">代码托管在 GitHub，欢迎贡献</p>
+            </div>
+
+            <div className="bg-gray-800/40 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/10 card-hover text-center">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+              </div>
+              <h3 className="text-gray-200 font-medium mb-2">现代技术栈</h3>
+              <p className="text-gray-500 text-sm">Next.js + TypeScript 构建</p>
+            </div>
+
+            <div className="bg-gray-800/40 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/10 card-hover text-center">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </div>
+              <h3 className="text-gray-200 font-medium mb-2">持续更新</h3>
+              <p className="text-gray-500 text-sm">根据社区反馈添加新功能</p>
+            </div>
+          </div>
+
+          <div className="text-center">
             <a 
-              href="https://screeps.com" 
+              href="https://github.com/KurohaneKaoruko/screeps-tools-nextjs" 
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg font-medium transition-all duration-300"
+              className="group inline-flex items-center space-x-2 px-6 py-3 btn-secondary rounded-xl font-medium text-gray-300"
             >
-              了解 Screeps
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+              </svg>
+              <span>查看源码</span>
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
             </a>
           </div>
         </div>
