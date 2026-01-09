@@ -111,7 +111,7 @@ export default function CreepDesignerPage() {
     <div className="min-h-screen screeps-bg">
       <div className="grid-bg" />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
