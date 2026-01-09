@@ -23,5 +23,13 @@ export const tools: Tool[] = [
     status: '可用',
     statusColor: 'green',
     href: '/tools/player-resources'
+  },
+  {
+    id: 'nuke-status',
+    name: 'Nuke 打击情况',
+    description: '查询正在飞行的 Nuke，包括目标房间、发射房间和剩余爆炸时间等信息。',
+    status: '可用',
+    statusColor: 'green',
+    href: '/tools/nuke-status'
   }
 ]

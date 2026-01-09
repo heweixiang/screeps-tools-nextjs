@@ -2,7 +2,12 @@ export interface ScreepsPlayerData {
   _id: string
   username: string
   gcl: number
+  gclProgress?: number
+  gclProgressTotal?: number
   power: number
+  powerProgress?: number
+  powerProgressTotal?: number
+  credits?: number
   badge?: any
 }
 
@@ -72,7 +77,7 @@ export class ScreepsApiClient {
     }
 
     if (this.token) {
-      headers['X-Token'] = this.token
+      (headers as Record<string, string>)['X-Token'] = this.token;
     }
 
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -343,6 +348,7 @@ export class ScreepsApiClient {
     }
     const data = await this.fetchApi('/auth/me')
     return {
+      _id: data._id || data.userid || '',
       username: data.username,
       gcl: data.gcl || 0,
       gclProgress: data.gclProgress || 0,
@@ -367,8 +373,8 @@ export class ScreepsApiClient {
       energyCapacityAvailable: room.energyCapacityAvailable,
       controllerProgress: room.controller?.progress,
       controllerProgressTotal: room.controller?.progressTotal,
-      storageEnergy: room.storage?.[RESOURCE_ENERGY],
-      terminalEnergy: room.terminal?.[RESOURCE_ENERGY]
+      storageEnergy: room.storage?.['energy'],
+      terminalEnergy: room.terminal?.['energy']
     }))
   }
 
@@ -463,4 +469,22 @@ export const RESOURCE_CATEGORIES: Record<string, { name: string; resources: stri
       'mist', 'condensate', 'concentrate', 'extract', 'spirit', 'emanation', 'essence'
     ]
   }
+}
+
+export interface NukeData {
+  id: string
+  roomName: string
+  launchRoomName: string
+  timeToLand: number
+  landTime: number
+  shard: string
+  targetOwner?: string
+  launchOwner?: string
+}
+
+export interface NukesResponse {
+  ok: number
+  nukes: NukeData[]
+  shardTickRates: Record<string, number>
+  error?: string
 }

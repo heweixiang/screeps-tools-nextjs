@@ -115,7 +115,6 @@ export default function CreepDesignerPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-indigo-400 text-sm font-medium mb-1">工具</p>
             <h1 className="text-2xl font-bold gradient-text">Creep 设计器</h1>
           </div>
           <button

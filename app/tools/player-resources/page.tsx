@@ -140,17 +140,10 @@ interface RoomResources {
   resources: Record<string, number>
 }
 
-interface ShardResources {
-  shard: string
-  rooms: RoomResources[]
-  totalResources: Record<string, number>
-}
-
 interface PlayerResourcesResponse {
   ok: number
   player: PlayerData
-  shards: ShardResources[]
-  totalResources: Record<string, number>
+  rooms: RoomResources[]
   error?: string
 }
 
@@ -229,7 +222,27 @@ export default function PlayerResourcesPage() {
 
   const gclLevel = data ? calculateGCLLevel(data.player.gcl) : 0
   const gplLevel = data ? calculateGPLLevel(data.player.power) : 0
-  const totalRooms = data ? data.shards.reduce((sum, s) => sum + s.rooms.length, 0) : 0
+  const totalRooms = data ? data.rooms.length : 0
+
+  const shardGroups = data ? data.rooms.reduce((acc, room) => {
+    if (!acc[room.shard]) {
+      acc[room.shard] = { rooms: [], totalResources: {} }
+    }
+    acc[room.shard].rooms.push(room)
+    for (const [resourceType, amount] of Object.entries(room.resources)) {
+      acc[room.shard].totalResources[resourceType] = (acc[room.shard].totalResources[resourceType] || 0) + amount
+    }
+    return acc
+  }, {} as Record<string, { rooms: RoomResources[]; totalResources: Record<string, number>}>) : {}
+
+  const totalResources = data ? data.rooms.reduce((acc, room) => {
+    for (const [resourceType, amount] of Object.entries(room.resources)) {
+      acc[resourceType] = (acc[resourceType] || 0) + amount
+    }
+    return acc
+  }, {} as Record<string, number>) : {}
+
+  const sortedShards = Object.keys(shardGroups).sort()
 
   return (
     <div className="min-h-screen screeps-bg">
@@ -237,7 +250,6 @@ export default function PlayerResourcesPage() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
         <div className="mb-8">
-          <p className="text-indigo-400 text-sm font-medium mb-1">工具</p>
           <h1 className="text-2xl font-bold gradient-text">玩家资源数据</h1>
         </div>
 
@@ -300,56 +312,59 @@ export default function PlayerResourcesPage() {
                   <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
                     <div className="text-xs text-gray-400">房间</div>
                     <div className="text-lg font-bold text-indigo-400">{totalRooms}</div>
-                    <div className="text-xs text-gray-500">{data.shards.length} 个 Shard</div>
+                    <div className="text-xs text-gray-500">{sortedShards.length} 个 Shard</div>
                   </div>
                 </div>
               </div>
 
               {/* 多 shard 时显示总汇总，单 shard 时直接显示该 shard 资源 */}
-              {data.shards.length > 1 ? (
+              {sortedShards.length > 1 ? (
                 <>
                   {/* 总资源汇总 */}
-                  {Object.keys(data.totalResources).length > 0 && (
-                    <ResourceSummary resources={data.totalResources} title="📦 全部资源汇总" />
+                  {Object.keys(totalResources).length > 0 && (
+                    <ResourceSummary resources={totalResources} title="📦 全部资源汇总" />
                   )}
 
                   {/* 各 Shard 资源 */}
-                  {data.shards.map((shardData) => (
-                    <div key={shardData.shard} className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10">
-                      <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-sm font-semibold text-gray-200">📍 {shardData.shard}</h2>
-                        <span className="text-xs text-gray-400">{shardData.rooms.length} 个房间</span>
-                      </div>
-                      {Object.keys(shardData.totalResources).length > 0 ? (
-                        Object.entries(RESOURCE_CATEGORIES).map(([key, category]) => {
-                          const categoryResources = category.resources
-                            .map(rt => ({ resourceType: rt, amount: shardData.totalResources[rt] || 0 }))
-                            .filter(({ amount }) => amount > 0)
-                          if (categoryResources.length === 0) return null
-                          return (
-                            <div key={key} className="mb-3 last:mb-0">
-                              <div className="text-xs font-medium text-gray-400 mb-1.5">{category.name}</div>
-                              <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-1.5">
-                                {categoryResources.map(({ resourceType, amount }) => (
-                                  <div key={resourceType} className="flex justify-between items-center py-1 px-2 bg-gray-900/50 rounded text-xs">
-                                    <span className={getResourceColor(resourceType)}>{resourceType}</span>
-                                    <span className="text-white font-medium">{formatNumber(amount)}</span>
-                                  </div>
-                                ))}
+                  {sortedShards.map((shardName) => {
+                    const shardData = shardGroups[shardName]
+                    return (
+                      <div key={shardName} className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10">
+                        <div className="flex items-center justify-between mb-3">
+                          <h2 className="text-sm font-semibold text-gray-200">📍 {shardName}</h2>
+                          <span className="text-xs text-gray-400">{shardData.rooms.length} 个房间</span>
+                        </div>
+                        {Object.keys(shardData.totalResources).length > 0 ? (
+                          Object.entries(RESOURCE_CATEGORIES).map(([key, category]) => {
+                            const categoryResources = category.resources
+                              .map(rt => ({ resourceType: rt, amount: shardData.totalResources[rt] || 0 }))
+                              .filter(({ amount }) => amount > 0)
+                            if (categoryResources.length === 0) return null
+                            return (
+                              <div key={key} className="mb-3 last:mb-0">
+                                <div className="text-xs font-medium text-gray-400 mb-1.5">{category.name}</div>
+                                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-1.5">
+                                  {categoryResources.map(({ resourceType, amount }) => (
+                                    <div key={resourceType} className="flex justify-between items-center py-1 px-2 bg-gray-900/50 rounded text-xs">
+                                      <span className={getResourceColor(resourceType)}>{resourceType}</span>
+                                      <span className="text-white font-medium">{formatNumber(amount)}</span>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
-                          )
-                        })
-                      ) : (
-                        <div className="text-gray-500 text-xs">暂无资源数据</div>
-                      )}
-                    </div>
-                  ))}
+                            )
+                          })
+                        ) : (
+                          <div className="text-gray-500 text-xs">暂无资源数据</div>
+                        )}
+                      </div>
+                    )
+                  })}
                 </>
               ) : (
                 /* 单 shard 时只显示一个资源卡片 */
-                data.shards.length === 1 && Object.keys(data.totalResources).length > 0 && (
-                  <ResourceSummary resources={data.totalResources} title={`📦 ${data.shards[0].shard} (${data.shards[0].rooms.length} 房间)`} />
+                sortedShards.length === 1 && Object.keys(totalResources).length > 0 && (
+                  <ResourceSummary resources={totalResources} title={`📦 ${sortedShards[0]} (${shardGroups[sortedShards[0]].rooms.length} 房间)`} />
                 )
               )}
             </>
