@@ -153,7 +153,7 @@ export default function PvPStatusPage() {
                     <div className="text-xs text-gray-500">10 ticks 内</div>
                   </div>
                   <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">Tick 速度</div>
+                    <div className="text-xs text-gray-400">Tick 平均速度</div>
                     <div className="text-lg font-bold text-indigo-400">
                       {avgTickSpeed > 0 ? formatTickSpeed(avgTickSpeed) : '-'}
                     </div>
