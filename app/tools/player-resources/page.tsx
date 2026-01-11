@@ -164,12 +164,12 @@ function ResourceSummary({ resources, title }: { resources: Record<string, numbe
 
     return (
       <div key={categoryKey} className="mb-3 last:mb-0">
-        <div className="text-xs font-medium text-gray-400 mb-1.5">{category.name}</div>
-        <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-1.5">
+        <div className="text-xs font-medium text-[#909fc4] mb-1.5">{category.name}</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5">
           {categoryResources.map(({ resourceType, amount }) => (
-            <div key={resourceType} className="flex justify-between items-center py-1 px-2 bg-gray-900/50 rounded text-xs">
-              <span className={getResourceColor(resourceType)}>{resourceType}</span>
-              <span className="text-white font-medium">{formatNumber(amount)}</span>
+            <div key={resourceType} className="flex justify-between items-center py-1.5 px-3 bg-[#0b0d0f]/50 rounded text-xs gap-2 min-w-0">
+              <span className={`${getResourceColor(resourceType)} truncate`}>{resourceType}</span>
+              <span className="text-white font-medium shrink-0">{formatNumber(amount)}</span>
             </div>
           ))}
         </div>
@@ -178,8 +178,8 @@ function ResourceSummary({ resources, title }: { resources: Record<string, numbe
   }
 
   return (
-    <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10">
-      <h2 className="text-sm font-semibold mb-3 text-gray-200">{title || '📦 资源汇总'}</h2>
+    <div className="bg-[#1d2027]/60 backdrop-blur-sm rounded-md p-4 border border-[#5973ff]/10">
+      <h2 className="text-sm font-semibold mb-3 text-[#e5e7eb]">{title || '📦 资源汇总'}</h2>
       {Object.entries(RESOURCE_CATEGORIES).map(([key, category]) => renderCategory(key, category))}
     </div>
   )
@@ -250,11 +250,11 @@ export default function PlayerResourcesPage() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold gradient-text">玩家资源数据</h1>
+          <h1 className="text-2xl font-bold text-white">查询资源</h1>
         </div>
 
         <div className="space-y-4">
-          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10 relative z-20">
+          <div className="bg-[#1d2027]/60 backdrop-blur-sm rounded-md p-4 border border-[#5973ff]/10 relative z-20">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
                 <input
@@ -262,7 +262,7 @@ export default function PlayerResourcesPage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="输入玩家名"
-                  className="w-full h-10 px-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="w-full h-10 px-3 bg-[#1d2027] border border-[#5973ff]/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#5973ff]/50"
                   onKeyDown={(e) => e.key === 'Enter' && fetchData()}
                 />
               </div>
@@ -283,7 +283,7 @@ export default function PlayerResourcesPage() {
               </button>
             </div>
             {error && (
-              <div className="mt-3 text-sm text-red-400 bg-red-900/20 rounded-lg p-3 border border-red-500/30">
+              <div className="mt-3 text-sm text-[#ff7379] bg-[#ff7379]/10 rounded-lg p-3 border border-[#ff7379]/30">
                 {error}
               </div>
             )}
@@ -292,27 +292,27 @@ export default function PlayerResourcesPage() {
           {data && (
             <>
               {/* 玩家信息 */}
-              <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10">
+              <div className="bg-[#1d2027]/60 backdrop-blur-sm rounded-md p-4 border border-[#5973ff]/10">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                  <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">用户名</div>
-                    <div className="text-lg font-bold text-white">{data.player.username}</div>
-                    <div className="text-xs text-gray-500">{data.player._id}</div>
+                  <div className="bg-[#0b0d0f]/60 rounded-lg p-3 border border-[#5973ff]/10 overflow-hidden">
+                    <div className="text-xs text-[#909fc4]">用户名</div>
+                    <div className="text-lg font-bold text-white truncate">{data.player.username}</div>
+                    <div className="text-xs text-[#909fc4]/60 truncate">{data.player._id}</div>
                   </div>
-                  <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">GCL</div>
+                  <div className="bg-[#0b0d0f]/60 rounded-lg p-3 border border-green-500/10">
+                    <div className="text-xs text-[#909fc4]">GCL</div>
                     <div className="text-lg font-bold text-green-400">{gclLevel.toFixed(2)}</div>
-                    <div className="text-xs text-gray-500">{formatNumber(data.player.gcl)} XP</div>
+                    <div className="text-xs text-[#909fc4]/60">{formatNumber(data.player.gcl)} XP</div>
                   </div>
-                  <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">GPL</div>
-                    <div className="text-lg font-bold text-purple-400">{gplLevel.toFixed(2)}</div>
-                    <div className="text-xs text-gray-500">{formatNumber(data.player.power)} Power</div>
+                  <div className="bg-[#0b0d0f]/60 rounded-lg p-3 border border-[#a459ff]/10">
+                    <div className="text-xs text-[#909fc4]">GPL</div>
+                    <div className="text-lg font-bold text-[#a459ff]">{gplLevel.toFixed(2)}</div>
+                    <div className="text-xs text-[#909fc4]/60">{formatNumber(data.player.power)} Power</div>
                   </div>
-                  <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">房间</div>
-                    <div className="text-lg font-bold text-indigo-400">{totalRooms}</div>
-                    <div className="text-xs text-gray-500">{sortedShards.length} 个 Shard</div>
+                  <div className="bg-[#0b0d0f]/60 rounded-lg p-3 border border-[#5973ff]/10">
+                    <div className="text-xs text-[#909fc4]">房间</div>
+                    <div className="text-lg font-bold text-[#5973ff]">{totalRooms}</div>
+                    <div className="text-xs text-[#909fc4]/60">{sortedShards.length} 个 Shard</div>
                   </div>
                 </div>
               </div>
@@ -329,10 +329,10 @@ export default function PlayerResourcesPage() {
                   {sortedShards.map((shardName) => {
                     const shardData = shardGroups[shardName]
                     return (
-                      <div key={shardName} className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10">
+                      <div key={shardName} className="bg-[#1d2027]/60 backdrop-blur-sm rounded-md p-4 border border-[#5973ff]/10">
                         <div className="flex items-center justify-between mb-3">
-                          <h2 className="text-sm font-semibold text-gray-200">📍 {shardName}</h2>
-                          <span className="text-xs text-gray-400">{shardData.rooms.length} 个房间</span>
+                          <h2 className="text-sm font-semibold text-[#e5e7eb]">📍 {shardName}</h2>
+                          <span className="text-xs text-[#909fc4]">{shardData.rooms.length} 个房间</span>
                         </div>
                         {Object.keys(shardData.totalResources).length > 0 ? (
                           Object.entries(RESOURCE_CATEGORIES).map(([key, category]) => {
@@ -342,12 +342,12 @@ export default function PlayerResourcesPage() {
                             if (categoryResources.length === 0) return null
                             return (
                               <div key={key} className="mb-3 last:mb-0">
-                                <div className="text-xs font-medium text-gray-400 mb-1.5">{category.name}</div>
-                                <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-1.5">
+                                <div className="text-xs font-medium text-[#909fc4] mb-1.5">{category.name}</div>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1.5">
                                   {categoryResources.map(({ resourceType, amount }) => (
-                                    <div key={resourceType} className="flex justify-between items-center py-1 px-2 bg-gray-900/50 rounded text-xs">
-                                      <span className={getResourceColor(resourceType)}>{resourceType}</span>
-                                      <span className="text-white font-medium">{formatNumber(amount)}</span>
+                                    <div key={resourceType} className="flex justify-between items-center py-1.5 px-3 bg-[#0b0d0f]/50 rounded text-xs gap-2 min-w-0">
+                                      <span className={`${getResourceColor(resourceType)} truncate`}>{resourceType}</span>
+                                      <span className="text-white font-medium shrink-0">{formatNumber(amount)}</span>
                                     </div>
                                   ))}
                                 </div>
@@ -355,7 +355,7 @@ export default function PlayerResourcesPage() {
                             )
                           })
                         ) : (
-                          <div className="text-gray-500 text-xs">暂无资源数据</div>
+                          <div className="text-[#909fc4]/60 text-xs">暂无资源数据</div>
                         )}
                       </div>
                     )

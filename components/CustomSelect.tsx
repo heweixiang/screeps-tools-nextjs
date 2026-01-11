@@ -51,7 +51,7 @@ export default function CustomSelect({ value, onChange, options, disabled, place
 
   if (disabled) {
     return (
-      <div className="flex-1 h-10 px-3 bg-gray-700/40 border border-gray-600/50 rounded-lg text-gray-500 text-sm flex items-center cursor-not-allowed opacity-40">
+      <div className="flex-1 h-10 px-3 bg-[#1d2027]/40 border border-[#5973ff]/10 rounded-lg text-[#909fc4]/50 text-sm flex items-center cursor-not-allowed opacity-40">
         {placeholder}
       </div>
     )
@@ -62,11 +62,11 @@ export default function CustomSelect({ value, onChange, options, disabled, place
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-10 px-3 pr-8 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white text-sm text-left focus:outline-none focus:ring-2 focus:ring-indigo-500/50 flex items-center"
+        className="w-full h-10 px-3 pr-8 bg-[#1d2027] border border-[#5973ff]/20 rounded-lg text-white text-sm text-left focus:outline-none focus:ring-2 focus:ring-[#5973ff]/50 flex items-center"
       >
         <span className="truncate">{selectedOption?.label || placeholder}</span>
         <svg 
-          className={`absolute right-2 w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
+          className={`absolute right-2 w-4 h-4 text-[#909fc4] transition-transform ${isOpen ? 'rotate-180' : ''}`} 
           fill="none" 
           viewBox="0 0 24 24" 
           stroke="currentColor"
@@ -76,7 +76,7 @@ export default function CustomSelect({ value, onChange, options, disabled, place
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-xl overflow-hidden">
+        <div className="absolute z-50 w-full mt-1 bg-[#1d2027] border border-[#5973ff]/20 rounded-lg shadow-xl overflow-hidden">
           <div className="max-h-48 overflow-y-auto">
             {options.map((option) => (
               <button
@@ -88,8 +88,8 @@ export default function CustomSelect({ value, onChange, options, disabled, place
                 }}
                 className={`w-full px-3 py-2 text-left text-sm transition-colors ${
                   option.value === value
-                    ? 'bg-indigo-500/20 text-indigo-300'
-                    : 'text-gray-300 hover:bg-gray-700'
+                    ? 'bg-[#5973ff]/20 text-[#5973ff]'
+                    : 'text-[#909fc4] hover:bg-[#2c467e]/30 hover:text-white'
                 }`}
               >
                 {option.label}

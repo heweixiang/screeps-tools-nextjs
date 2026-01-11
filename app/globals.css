@@ -1,15 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --background: #111827;
+  /* Screeps 官网配色 */
+  --background: #161724;
+  --background-dark: #0b0d0f;
+  --background-light: #1d2027;
   --foreground: #e5e7eb;
-  --accent-blue: #6366f1;
-  --accent-purple: #8b5cf6;
+  
+  /* 主色调 - Screeps 蓝紫色 */
+  --accent-primary: #5973ff;
+  --accent-secondary: #5048ff;
+  --accent-purple: #a459ff;
+  --accent-blue-light: #6c82ff;
+  
+  /* 辅助色 */
+  --text-muted: #909fc4;
+  --accent-red: #ff7379;
+  --border-color: rgba(89, 115, 255, 0.15);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #374151 #1f2937;
+  scrollbar-color: #2c467e #161724;
 }
 
 *::-webkit-scrollbar {
@@ -18,16 +30,16 @@
 }
 
 *::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: #161724;
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #374151;
+  background: #2c467e;
   border-radius: 4px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+  background: #3d5a9e;
 }
 
 body {
@@ -38,15 +50,16 @@ body {
   overflow-x: hidden;
 }
 
-/* Screeps 风格深色背景 */
+/* Screeps 风格深色背景 - 参考官网渐变 */
 .screeps-bg {
   background: 
-    radial-gradient(ellipse 100% 100% at 50% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 80% 60% at 80% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
-    linear-gradient(180deg, #0f172a 0%, #111827 50%, #0f172a 100%);
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(80, 72, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(164, 89, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 60% at 20% 80%, rgba(35, 32, 63, 0.8) 0%, transparent 50%),
+    linear-gradient(180deg, #161724 0%, #0b0d0f 50%, #161724 100%);
 }
 
-/* 网格背景动画 */
+/* 网格背景动画 - Screeps 风格 */
 .grid-bg {
   position: fixed;
   top: 0;
@@ -55,67 +68,68 @@ body {
   bottom: 0;
   z-index: -1;
   background-image: 
-    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
+    linear-gradient(rgba(89, 115, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(89, 115, 255, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
   mask-image: radial-gradient(ellipse 100% 80% at 50% 20%, black 0%, transparent 70%);
   -webkit-mask-image: radial-gradient(ellipse 100% 80% at 50% 20%, black 0%, transparent 70%);
 }
 
-/* 渐变文字 */
+/* 渐变文字 - Screeps 蓝紫色 */
 .gradient-text {
-  background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #6366f1 100%);
+  background: linear-gradient(135deg, #fff 0%, #909fc4 50%, #5973ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .gradient-text-blue {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #5973ff 0%, #a459ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* 发光效果 */
+/* 发光效果 - Screeps 蓝色 */
 .glow {
-  box-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 40px rgba(89, 115, 255, 0.2);
 }
 
 .glow-text {
-  text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+  text-shadow: 0 0 30px rgba(89, 115, 255, 0.6);
 }
 
 /* 卡片悬停效果 */
 .card-hover {
-  border: 1px solid rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(89, 115, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
 .card-hover:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.1);
+  border-color: rgba(89, 115, 255, 0.35);
+  box-shadow: 0 0 30px rgba(89, 115, 255, 0.12);
 }
 
-/* 按钮样式 */
+/* 按钮样式 - Screeps 官网风格 */
 .btn-primary {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #5973ff 0%, #5048ff 100%);
   transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-  box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 30px rgba(89, 115, 255, 0.5);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background: rgba(31, 41, 55, 0.8);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: rgba(29, 32, 39, 0.9);
+  border: 1px solid rgba(89, 115, 255, 0.25);
   transition: all 0.3s ease;
 }
 
 .btn-secondary:hover {
-  border-color: rgba(99, 102, 241, 0.5);
-  background: rgba(31, 41, 55, 1);
+  border-color: rgba(89, 115, 255, 0.6);
+  background: rgba(44, 70, 126, 0.3);
 }
 
 /* 隐藏 number 输入框的上下箭头 */
@@ -131,7 +145,7 @@ input[type="number"] {
 
 /* 自定义 select 样式 */
 select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23909fc4' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
   background-position: right 0.5rem center;
   background-repeat: no-repeat;
   background-size: 1.25em 1.25em;
@@ -143,7 +157,7 @@ select {
 
 /* 下拉选项深色样式 */
 select option {
-  background-color: #1f2937;
+  background-color: #1d2027;
   color: #e5e7eb;
   padding: 8px 12px;
   border: none;
@@ -153,7 +167,7 @@ select option {
 select option:hover,
 select option:focus,
 select option:checked {
-  background-color: #374151;
+  background-color: #2c467e;
   color: #fff;
 }
 
@@ -166,6 +180,19 @@ select:focus {
 select:-moz-focusring {
   color: transparent;
   text-shadow: 0 0 0 #e5e7eb;
+}
+
+/* 输入框样式 - Screeps 风格 */
+input, textarea {
+  background-color: rgba(29, 32, 39, 0.8);
+  border: 1px solid rgba(89, 115, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus {
+  border-color: rgba(89, 115, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(89, 115, 255, 0.1);
+  outline: none;
 }
 
 /* 动画 */
@@ -206,10 +233,10 @@ select:-moz-focusring {
   animation: gradient-shift 3s ease infinite;
 }
 
-/* 分隔线 */
+/* 分隔线 - Screeps 蓝色 */
 .divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.3) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(89, 115, 255, 0.35) 50%, transparent 100%);
 }
 
 @utility text-balance {

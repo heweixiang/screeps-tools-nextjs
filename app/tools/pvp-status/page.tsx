@@ -98,21 +98,21 @@ export default function PvPStatusPage() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold gradient-text">PvP 战争情况</h1>
+          <h1 className="text-2xl font-bold text-white">PvP 战争情况</h1>
         </div>
 
         <div className="space-y-4">
-          <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10 relative z-20">
+          <div className="bg-[#1d2027]/60 backdrop-blur-sm rounded-md p-4 border border-[#5973ff]/10 relative z-20">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
-                <label className="block text-xs text-gray-400 mb-1">查询间隔（ticks）</label>
+                <label className="block text-xs text-[#909fc4] mb-1">查询间隔（ticks）</label>
                 <input
                   type="number"
                   value={interval}
                   onChange={(e) => setInterval(e.target.value)}
                   placeholder="100"
                   min="1"
-                  className="w-full h-10 px-3 bg-gray-700/80 border border-gray-600/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="w-full h-10 px-3 bg-[#1d2027] border border-[#5973ff]/20 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#5973ff]/50"
                   onKeyDown={(e) => e.key === 'Enter' && fetchData()}
                 />
               </div>
@@ -127,7 +127,7 @@ export default function PvPStatusPage() {
               </div>
             </div>
             {error && (
-              <div className="mt-3 text-sm text-red-400 bg-red-900/20 rounded-lg p-3 border border-red-500/30">
+              <div className="mt-3 text-sm text-[#ff7379] bg-[#ff7379]/10 rounded-lg p-3 border border-[#ff7379]/30">
                 {error}
               </div>
             )}
@@ -135,29 +135,29 @@ export default function PvPStatusPage() {
 
           {data && (
             <>
-              <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10">
+              <div className="bg-[#1d2027]/60 backdrop-blur-sm rounded-md p-4 border border-[#5973ff]/10">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                  <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">活跃 Shard</div>
+                  <div className="bg-[#0b0d0f]/60 rounded-lg p-3 border border-[#5973ff]/10">
+                    <div className="text-xs text-[#909fc4]">活跃 Shard</div>
                     <div className="text-lg font-bold text-white">{activeShards.length}</div>
-                    <div className="text-xs text-gray-500">共 4 个 Shard</div>
+                    <div className="text-xs text-[#909fc4]/60">共 4 个 Shard</div>
                   </div>
-                  <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">战斗房间数</div>
-                    <div className="text-lg font-bold text-red-400">{totalRooms}</div>
-                    <div className="text-xs text-gray-500">最近 {interval} ticks</div>
+                  <div className="bg-[#0b0d0f]/60 rounded-lg p-3 border border-[#ff7379]/10">
+                    <div className="text-xs text-[#909fc4]">战斗房间数</div>
+                    <div className="text-lg font-bold text-[#ff7379]">{totalRooms}</div>
+                    <div className="text-xs text-[#909fc4]/60">最近 {interval} ticks</div>
                   </div>
-                  <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">正在战斗</div>
+                  <div className="bg-[#0b0d0f]/60 rounded-lg p-3 border border-green-500/10">
+                    <div className="text-xs text-[#909fc4]">正在战斗</div>
                     <div className="text-lg font-bold text-green-400">{activeBattles}</div>
-                    <div className="text-xs text-gray-500">10 ticks 内</div>
+                    <div className="text-xs text-[#909fc4]/60">10 ticks 内</div>
                   </div>
-                  <div className="bg-gray-900/60 rounded-lg p-3 border border-gray-700/50">
-                    <div className="text-xs text-gray-400">Tick 平均速度</div>
-                    <div className="text-lg font-bold text-indigo-400">
+                  <div className="bg-[#0b0d0f]/60 rounded-lg p-3 border border-[#5973ff]/10">
+                    <div className="text-xs text-[#909fc4]">Tick 平均速度</div>
+                    <div className="text-lg font-bold text-[#5973ff]">
                       {avgTickSpeed > 0 ? formatTickSpeed(avgTickSpeed) : '-'}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-[#909fc4]/60">
                       {avgTickSpeed > 0 ? `${Math.round(avgTickSpeed)}ms` : '无数据'}
                     </div>
                   </div>
@@ -174,27 +174,27 @@ export default function PvPStatusPage() {
                     const shardTime = shardData?.time || 0
 
                     return (
-                      <div key={shard} className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-indigo-500/10">
+                      <div key={shard} className="bg-[#1d2027]/60 backdrop-blur-sm rounded-md p-4 border border-[#5973ff]/10">
                         <div className="flex items-center justify-between mb-3">
-                          <h2 className="text-sm font-semibold text-gray-200">⚔️ {shard}</h2>
-                          <div className="flex items-center gap-3 text-xs text-gray-400">
+                          <h2 className="text-sm font-semibold text-[#e5e7eb]">⚔️ {shard}</h2>
+                          <div className="flex items-center gap-3 text-xs text-[#909fc4]">
                             <span>
                               Tick: <span className="text-white font-mono">{shardTime.toLocaleString()}</span>
                             </span>
                             {data.shardTickSpeeds?.[shard] && (
                               <span>
-                                速度: <span className="text-indigo-400 font-mono">{formatTickSpeed(data.shardTickSpeeds[shard])}</span>
+                                速度: <span className="text-[#5973ff] font-mono">{formatTickSpeed(data.shardTickSpeeds[shard])}</span>
                               </span>
                             )}
                           </div>
                         </div>
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto -mx-4 px-4">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="text-left text-gray-400 border-b border-gray-700/50">
-                                <th className="pb-3 pr-4 font-medium">房间名称</th>
-                                <th className="pb-3 pr-4 font-medium">战斗时间</th>
-                                <th className="pb-3 pr-4 font-medium">距离现在</th>
+                              <tr className="text-left text-[#909fc4] border-b border-[#5973ff]/10">
+                                <th className="pb-3 pl-3 pr-4 font-medium">房间名称</th>
+                                <th className="pb-3 px-4 font-medium">战斗时间</th>
+                                <th className="pb-3 pl-4 pr-3 font-medium">距离现在</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -203,24 +203,24 @@ export default function PvPStatusPage() {
                                 return (
                                   <tr 
                                     key={room._id} 
-                                    className="border-b border-gray-700/30 hover:bg-gray-700/30 transition-colors"
+                                    className="border-b border-[#5973ff]/5 hover:bg-[#2c467e]/20 transition-colors"
                                   >
-                                    <td className="py-3 pr-4">
+                                    <td className="py-3 pl-3 pr-4">
                                       <a 
                                         href={`https://screeps.com/a/#!/room/${shard}/${room._id}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-white font-mono hover:text-indigo-400 transition-colors"
+                                        className="text-white font-mono hover:text-[#5973ff] transition-colors"
                                         title={`在 Screeps 中查看 ${room._id}`}
                                       >
                                         {room._id}
                                       </a>
                                     </td>
-                                    <td className="py-3 pr-4">
-                                      <span className="text-gray-400">{room.lastPvpTime.toLocaleString()}</span>
+                                    <td className="py-3 px-4">
+                                      <span className="text-[#909fc4]">{room.lastPvpTime.toLocaleString()}</span>
                                     </td>
-                                    <td className="py-3">
-                                       <span className={timeAgo <= 100 ? 'text-red-400 font-medium' : 'text-gray-400'}>
+                                    <td className="py-3 pl-4 pr-3">
+                                       <span className={timeAgo <= 100 ? 'text-[#ff7379] font-medium' : 'text-[#909fc4]'}>
                                           {timeAgo} ticks
                                         </span>
                                     </td>
@@ -235,9 +235,9 @@ export default function PvPStatusPage() {
                   })}
                 </div>
               ) : (
-                <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-8 border border-indigo-500/10 text-center">
+                <div className="bg-[#1d2027]/60 backdrop-blur-sm rounded-md p-8 border border-[#5973ff]/10 text-center">
                   <div className="text-4xl mb-3">🕊️</div>
-                  <div className="text-gray-400">在最近 {interval} ticks 内没有发生 PvP 战斗</div>
+                  <div className="text-[#909fc4]">在最近 {interval} ticks 内没有发生 PvP 战斗</div>
                 </div>
               )}
             </>
