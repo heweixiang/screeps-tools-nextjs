@@ -47,6 +47,10 @@ export default function ConsolePage() {
   const [autoScroll, setAutoScroll] = useState(true)
   const logsContainerRef = useRef<HTMLDivElement>(null)
   
+  // Environment variable to control spectator mode availability
+  // Default to false if not specified (only enable if explicitly set to 'true')
+  const enableSpectatorMode = process.env.NEXT_PUBLIC_ENABLE_CONSOLE_SPECTATOR_MODE === 'true'
+
   const { status, connect, disconnect } = useScreepsSocket((newLogs) => {
     setLogs(prev => {
         // 转换 Hook 中的日志格式到组件的日志格式
@@ -132,6 +136,8 @@ export default function ConsolePage() {
   }, [token, connectionMode, shard, connect, disconnect])
 
   const handleSpectatorConnect = () => {
+      if (!enableSpectatorMode) return
+      
       if (connectionMode === 'spectator' && targetUsername) {
           // 观察模式完全不传 Token
           connect('', targetUsername)
@@ -352,16 +358,18 @@ export default function ConsolePage() {
                     >
                       Token 模式
                     </button>
-                    <button
-                      onClick={() => setConnectionMode('spectator')}
-                      className={`flex-1 py-1.5 text-xs rounded-md transition-colors ${
-                        connectionMode === 'spectator' 
-                          ? 'bg-[#5973ff]/20 text-white shadow-sm' 
-                          : 'text-[#909fc4] hover:text-[#e5e7eb]'
-                      }`}
-                    >
-                      观察模式
-                    </button>
+                    {enableSpectatorMode && (
+                      <button
+                        onClick={() => setConnectionMode('spectator')}
+                        className={`flex-1 py-1.5 text-xs rounded-md transition-colors ${
+                          connectionMode === 'spectator' 
+                            ? 'bg-[#5973ff]/20 text-white shadow-sm' 
+                            : 'text-[#909fc4] hover:text-[#e5e7eb]'
+                        }`}
+                      >
+                        观察模式
+                      </button>
+                    )}
                   </div>
                 </div>
 
