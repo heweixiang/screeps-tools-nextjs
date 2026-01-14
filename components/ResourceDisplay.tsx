@@ -1,7 +1,7 @@
 'use client'
 
-import { ScreepsRoomData } from '@/lib/screeps-api'
-import { formatNumber } from '@/lib/screeps-api'
+import { ScreepsRoomData, formatNumber, RESOURCE_CATEGORIES } from '@/lib/screeps-common'
+
 
 interface ResourceDisplayProps {
   rooms: ScreepsRoomData[]

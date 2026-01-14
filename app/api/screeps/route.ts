@@ -1,113 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Shard, IMapStats, IRoomObjects, IUserInfo, IAllRooms, INukesData, IPvpData, IAllShardInfo } from 'screeps-simple-api'
+import { ScreepsServerApi } from '@/lib/screeps-api'
+import { 
+  ScreepsPlayerData, 
+  ScreepsRoomData, 
+  PlayerResourcesResponse, 
+  NukeData, 
+  NukesResponse, 
+  PvPResponse, 
+  PvPShardData, 
+  PvPRoomData 
+} from '@/lib/screeps-common'
 
-const SCREEPS_API_TOKEN = process.env.SCREEPS_API_TOKEN
+const api = new ScreepsServerApi().raw
 
-interface PlayerData {
-  _id: string
-  username: string
-  gcl: number
-  power: number
-  badge?: any
-}
 
-interface RoomResources {
-  name: string
-  shard: string
-  storageEnergy: number
-  terminalEnergy: number
-  resources: Record<string, number>
-}
 
-interface PlayerResourcesResponse {
-  ok: number
-  player: PlayerData
-  rooms: RoomResources[]
-  error?: string
-}
 
-interface NukeData {
-  id: string
-  roomName: string
-  launchRoomName: string
-  landTime: number
-  shard: string
-  targetOwner?: string
-  launchOwner?: string
-}
-
-interface NukesResponse {
-  ok: number
-  nukes: NukeData[]
-  shardGameTimes: Record<string, number>
-  shardTickSpeeds?: Record<string, number>
-  error?: string
-}
-
-interface NukeApiData {
-  _id?: string
-  id?: string
-  room: string
-  launchRoomName: string
-  landTime: number
-}
-
-interface NukesApiResponse {
-  ok: number
-  nukes: Record<string, NukeApiData[]>
-}
-
-interface PvPRoomData {
-  _id: string
-  lastPvpTime: number
-}
-
-interface PvPShardData {
-  time: number
-  rooms: PvPRoomData[]
-}
-
-interface PvPResponse {
-  ok: number,
-  pvp: {
-    shard0?: PvPShardData
-    shard1?: PvPShardData
-    shard2?: PvPShardData
-    shard3?: PvPShardData
-  }
-  shardTickSpeeds?: Record<string, number>
-  error?: string
-}
-
-interface ShardInfo {
-  name: string
-  lastTicks: number[]
-  cpuLimit: number
-  rooms: number
-  users: number
-  tick: number
-}
-
-interface ShardsInfoResponse {
-  ok: number
-  shards: ShardInfo[]
+// 辅助函数：处理 API 错误
+const handleApiError = (error: any, defaultMsg: string) => {
+  console.error(defaultMsg, error)
+  return { ok: 0, error: error instanceof Error ? error.message : defaultMsg }
 }
 
 // 简单的内存缓存
+
+
 const cache = new Map<string, { data: any; timestamp: number }>()
 const CACHE_TTL = 60 * 1000
 
 // 房间所有者缓存
 interface RoomOwnerCacheEntry {
-  owner: string | null  // null 表示无主房间
+  owner: string | null
   timestamp: number
 }
 
 const roomOwnerCache = new Map<string, RoomOwnerCacheEntry>()
-const ROOM_OWNER_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+const ROOM_OWNER_CACHE_TTL = 5 * 60 * 1000 
 
 // Shards 信息缓存
-let shardsInfoCache: { data: ShardsInfoResponse; timestamp: number } | null = null
-const SHARDS_INFO_CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+let shardsInfoCache: { data: IAllShardInfo; timestamp: number } | null = null
+const SHARDS_INFO_CACHE_TTL = 5 * 60 * 1000
 
 function getRoomOwnerCacheKey(shard: string, room: string): string {
   return `room_owner_${shard}_${room}`
@@ -122,29 +55,12 @@ function getRoomOwnerFromCache(shard: string, room: string): string | null | und
   if (cached) {
     roomOwnerCache.delete(key)
   }
-  return undefined // undefined means cache miss, null means unowned room
+  return undefined 
 }
 
 function setRoomOwnerCache(shard: string, room: string, owner: string | null): void {
   const key = getRoomOwnerCacheKey(shard, room)
   roomOwnerCache.set(key, { owner, timestamp: Date.now() })
-}
-
-// Map Stats API 响应类型
-interface MapStatsResponse {
-  ok: number
-  stats: Record<string, {
-    status: string
-    own?: {
-      user: string  // 用户 ID
-      level: number
-    }
-  }>
-  users: Record<string, {
-    _id: string
-    username: string
-    badge?: any
-  }>
 }
 
 // 调用 map-stats API 获取房间所有者
@@ -159,31 +75,9 @@ async function getRoomOwners(
   }
 
   try {
-    const requestBody = {
-      rooms,
-      statName: 'owner0',
-      shard
-    }
-    
-    const headers: HeadersInit = { 'Content-Type': 'application/json' }
-    if (SCREEPS_API_TOKEN) {
-      (headers as Record<string, string>)['X-Token'] = SCREEPS_API_TOKEN
-    }
-    
-    const response = await fetch('https://screeps.com/api/game/map-stats', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(requestBody),
-      cache: 'no-store'
-    })
+    // 使用 screeps-simple-api 获取 map stats
+    const data: IMapStats = await api.getMapStats(rooms, shard as Shard, 'owner0')
 
-    if (!response.ok) {
-      rooms.forEach(room => { result[room] = null })
-      return result
-    }
-
-    const data = await response.json()
-    
     if (data.ok !== 1) {
       rooms.forEach(room => { result[room] = null })
       return result
@@ -191,8 +85,8 @@ async function getRoomOwners(
 
     for (const room of rooms) {
       const roomStats = data.stats?.[room]
-      
       let userId: string | undefined
+      
       if (roomStats?.own) {
         if (typeof roomStats.own === 'object' && roomStats.own.user) {
           userId = roomStats.own.user
@@ -223,15 +117,12 @@ async function fetchRoomOwnersWithCache(
   const result: Record<string, string | null> = {}
   const cacheMisses: { room: string; shard: string }[] = []
 
-  // 先检查缓存
   for (const { room, shard } of rooms) {
     const cacheKey = `${shard}_${room}`
     const cached = getRoomOwnerFromCache(shard, room)
     if (cached !== undefined) {
-      // 缓存命中（包括 null 表示无主房间）
       result[cacheKey] = cached
     } else {
-      // 缓存未命中
       cacheMisses.push({ room, shard })
     }
   }
@@ -240,7 +131,6 @@ async function fetchRoomOwnersWithCache(
     return result
   }
 
-  // 按 shard 分组未命中的房间
   const roomsByShard = new Map<string, string[]>()
   for (const { room, shard } of cacheMisses) {
     const shardRooms = roomsByShard.get(shard) || []
@@ -248,12 +138,10 @@ async function fetchRoomOwnersWithCache(
     roomsByShard.set(shard, shardRooms)
   }
 
-  // 批量调用 API 并更新缓存
   const apiPromises = Array.from(roomsByShard.entries()).map(
     async ([shard, shardRooms]) => {
       try {
         const owners = await getRoomOwners(shardRooms, shard)
-        // 更新缓存和结果
         for (const room of shardRooms) {
           const owner = owners[room] ?? null
           setRoomOwnerCache(shard, room, owner)
@@ -292,7 +180,6 @@ setInterval(() => {
       cache.delete(key)
     }
   }
-  // 清理房间所有者缓存
   for (const [key, value] of roomOwnerCache.entries()) {
     if (now - value.timestamp > ROOM_OWNER_CACHE_TTL) {
       roomOwnerCache.delete(key)
@@ -300,37 +187,10 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000)
 
-async function fetchScreepsApi(url: string, useCache = true, requireAuth = false): Promise<any> {
-  if (useCache) {
-    const cached = getCached(url)
-    if (cached) return cached
-  }
+async function getRoomResources(room: string, shard: string): Promise<ScreepsRoomData> {
+  // 使用 screeps-simple-api 获取 room objects
+  const data: IRoomObjects = await api.getRoomObject(room, shard as Shard)
 
-  const headers: HeadersInit = { 'Content-Type': 'application/json' }
-  
-  if (requireAuth && SCREEPS_API_TOKEN) {
-    (headers as Record<string, string>)['X-Token'] = SCREEPS_API_TOKEN
-  }
-
-  const response = await fetch(url, {
-    headers,
-    cache: 'no-store',
-  })
-  if (!response.ok) {
-    const text = await response.text().catch(() => '')
-    throw new Error(`Screeps API error: ${response.status} - ${text || response.statusText}`)
-  }
-  const data = await response.json()
-  
-  if (useCache) {
-    setCache(url, data)
-  }
-  return data
-}
-
-async function getRoomResources(room: string, shard: string): Promise<RoomResources> {
-  const url = `https://screeps.com/api/game/room-objects?room=${encodeURIComponent(room)}&shard=${encodeURIComponent(shard)}`
-  const data = await fetchScreepsApi(url)
   
   let storageEnergy = 0
   let terminalEnergy = 0
@@ -339,16 +199,20 @@ async function getRoomResources(room: string, shard: string): Promise<RoomResour
   if (data.objects) {
     for (const obj of data.objects) {
       if (obj.type === 'storage' || obj.type === 'terminal' || obj.type === 'factory') {
-        for (const [resourceType, amount] of Object.entries(obj.store || {})) {
-          const value = amount as number
-          if (value > 0) {
-            resources[resourceType] = (resources[resourceType] || 0) + value
-            if (obj.type === 'storage' && resourceType === 'energy') {
-              storageEnergy = value
-            } else if (obj.type === 'terminal' && resourceType === 'energy') {
-              terminalEnergy = value
+        // @ts-ignore - store 类型在不同对象中略有不同，这里统一处理
+        const store = obj.store
+        if (store) {
+            for (const [resourceType, amount] of Object.entries(store)) {
+            const value = amount as number
+            if (value > 0) {
+                resources[resourceType] = (resources[resourceType] || 0) + value
+                if (obj.type === 'storage' && resourceType === 'energy') {
+                storageEnergy = value
+                } else if (obj.type === 'terminal' && resourceType === 'energy') {
+                terminalEnergy = value
+                }
             }
-          }
+            }
         }
       }
     }
@@ -364,13 +228,16 @@ async function getPlayerResources(username: string, targetShard: string = 'all')
   if (cached) return cached
 
   try {
-    const userInfo = await fetchScreepsApi(`https://screeps.com/api/user/find?username=${encodeURIComponent(username)}`)
+    // 使用 screeps-simple-api 获取用户信息
+    const userInfo: IUserInfo = await api.getUserInfoByUserName(username)
     if (userInfo.ok !== 1 || !userInfo.user) {
-      return { ok: 0, player: {} as PlayerData, rooms: [], error: '玩家不存在' }
+      return { ok: 0, player: {} as ScreepsPlayerData, rooms: [], error: '玩家不存在' }
     }
-    const player = userInfo.user as PlayerData
+    const player = userInfo.user as ScreepsPlayerData
 
-    const userRooms = await fetchScreepsApi(`https://screeps.com/api/user/rooms?id=${encodeURIComponent(player._id)}`)
+
+    // 使用 screeps-simple-api 获取用户房间
+    const userRooms: IAllRooms = await api.getRooms(player._id)
     
     const shardsData = userRooms.shards || {}
     if (Object.keys(shardsData).length === 0) {
@@ -405,67 +272,62 @@ async function getPlayerResources(username: string, targetShard: string = 'all')
   } catch (error) {
     return { 
       ok: 0, 
-      player: {} as PlayerData, 
+      player: {} as ScreepsPlayerData, 
       rooms: [], 
       error: error instanceof Error ? error.message : '获取玩家资源失败' 
     }
   }
 }
 
-function processNukeData(
-  nukesData: NukeApiData[],
-  shard: string
-): NukeData[] {
-  return nukesData.map(nuke => ({
-    id: nuke._id || nuke.id || '',
-    roomName: nuke.room,
-    launchRoomName: nuke.launchRoomName,
-    landTime: nuke.landTime,
-    shard
-  }))
-}
 
 async function getNukes(shards: string[]): Promise<NukesResponse> {
   const allNukes: NukeData[] = []
   const shardGameTimes: Record<string, number> = {}
   
   try {
-    const nukesData = await fetchScreepsApi('https://screeps.com/api/experimental/nukes') as NukesApiResponse
+    // 使用 screeps-simple-api 获取 Nuke
+    const nukesData: INukesData = await api.getNukes()
     
     if (nukesData?.ok === 1 && nukesData.nukes) {
       const shardResults = await Promise.all(
         shards.map(async shard => {
+          // @ts-ignore - nukesData.nukes 类型定义可能不完全匹配实际返回的 key
           const shardNukes = nukesData.nukes[shard]
           if (!Array.isArray(shardNukes) || shardNukes.length === 0) return []
           
-          const gameTimeData = await fetchScreepsApi(`https://screeps.com/api/game/time?shard=${shard}`)
+          // 使用 screeps-simple-api 获取游戏时间
+          const gameTimeData = await api.getGameTime(shard as Shard)
           shardGameTimes[shard] = gameTimeData.time || Math.floor(Date.now() / 1000)
           
-          return processNukeData(shardNukes, shard)
+          return shardNukes.map((nuke: any) => ({
+            id: nuke._id || nuke.id || '',
+            roomName: nuke.room,
+            launchRoomName: nuke.launchRoomName,
+            timeToLand: nuke.timeToLand || 0, // 添加默认值或从 nuke 对象获取
+            landTime: nuke.landTime,
+            shard
+          }))
+
         })
       )
       
       allNukes.push(...shardResults.flat())
     }
     
-    // 获取所有目标房间和发射房间的所有者信息
     if (allNukes.length > 0) {
       const roomsToQuery: { room: string; shard: string }[] = []
       
-      // 收集所有需要查询的房间（目标房间和发射房间）
       for (const nuke of allNukes) {
         roomsToQuery.push({ room: nuke.roomName, shard: nuke.shard })
         roomsToQuery.push({ room: nuke.launchRoomName, shard: nuke.shard })
       }
       
-      // 去重
       const uniqueRooms = Array.from(
         new Map(roomsToQuery.map(r => [`${r.shard}_${r.room}`, r])).values()
       )
       
       const ownerData = await fetchRoomOwnersWithCache(uniqueRooms)
       
-      // 将所有者信息合并到核弹数据中
       for (const nuke of allNukes) {
         const targetOwnerKey = `${nuke.shard}_${nuke.roomName}`
         const launchOwnerKey = `${nuke.shard}_${nuke.launchRoomName}`
@@ -482,20 +344,21 @@ async function getNukes(shards: string[]): Promise<NukesResponse> {
       })
     }
     
-    return { ok: 1, nukes: allNukes, shardGameTimes, shardTickSpeeds }
+    return { ok: 1, nukes: allNukes, shardGameTimes, shardTickRates: shardTickSpeeds }
   } catch (error) {
-    return { ok: 1, nukes: allNukes, shardGameTimes }
+    return { ok: 1, nukes: allNukes, shardGameTimes, shardTickRates: {} }
   }
 }
 
-async function getShardsInfo(): Promise<ShardsInfoResponse> {
+
+async function getShardsInfo(): Promise<IAllShardInfo> {
   if (shardsInfoCache && Date.now() - shardsInfoCache.timestamp < SHARDS_INFO_CACHE_TTL) {
     return shardsInfoCache.data
   }
 
   try {
-    const url = 'https://screeps.com/api/game/shards/info'
-    const data = await fetchScreepsApi(url) as ShardsInfoResponse
+    // 使用 screeps-simple-api 获取 shard 信息
+    const data: IAllShardInfo = await api.getShards()
     
     shardsInfoCache = { data, timestamp: Date.now() }
     return data
@@ -509,23 +372,32 @@ async function getShardsInfo(): Promise<ShardsInfoResponse> {
 
 async function getPvPData(interval: number): Promise<PvPResponse> {
   try {
-    const url = `https://screeps.com/api/experimental/pvp?interval=${interval}`
-    const data = await fetchScreepsApi(url) as PvPResponse
+    // 使用 screeps-simple-api 获取 PvP 数据
+    const data: IPvpData = await api.getPvp(interval)
     
     const shardsInfo = await getShardsInfo()
+    let shardTickSpeeds: Record<string, number> = {}
+
     if (shardsInfo.ok === 1 && shardsInfo.shards) {
-      const shardTickSpeeds: Record<string, number> = {}
       shardsInfo.shards.forEach(shard => {
         shardTickSpeeds[shard.name] = shard.tick
       })
-      data.shardTickSpeeds = shardTickSpeeds
     }
     
+    // 转换 screeps-simple-api 的响应格式到前端需要的格式
+    const result: PvPResponse = {
+        ok: data.ok || 0,
+        pvp: {},
+        shardTickSpeeds
+    }
+
     if (data.ok === 1 && data.pvp) {
       const roomsToQuery: { room: string; shard: string }[] = []
       
       for (const [shard, shardData] of Object.entries(data.pvp)) {
+        // @ts-ignore
         if (shardData?.rooms) {
+           // @ts-ignore
           for (const room of shardData.rooms) {
             roomsToQuery.push({ room: room._id, shard })
           }
@@ -535,18 +407,35 @@ async function getPvPData(interval: number): Promise<PvPResponse> {
       if (roomsToQuery.length > 0) {
         const ownerData = await fetchRoomOwnersWithCache(roomsToQuery)
         
+        // 构造返回数据
         for (const [shard, shardData] of Object.entries(data.pvp)) {
-          if (shardData?.rooms) {
-            for (const room of shardData.rooms) {
-              const ownerKey = `${shard}_${room._id}`
-              ;(room as any).owner = ownerData[ownerKey] ?? undefined
+            // @ts-ignore
+            if (shardData?.rooms) {
+                const pvpRooms = (shardData as any).rooms.map((room: any) => ({
+                    _id: room._id,
+                    lastPvpTime: room.lastPvpTime,
+                    owner: ownerData[`${shard}_${room._id}`] ?? undefined
+                })) as PvPRoomData[]
+
+                result.pvp[shard] = {
+                    time: (shardData as any).time,
+                    rooms: pvpRooms
+                }
             }
-          }
+        }
+      } else {
+        // 如果没有房间需要查询所有者，直接复制数据
+        for (const [shard, shardData] of Object.entries(data.pvp)) {
+            // @ts-ignore
+            if (shardData?.rooms) {
+                 result.pvp[shard] = shardData as unknown as PvPShardData
+            }
         }
       }
     }
+
     
-    return data
+    return result
   } catch (error) {
     return { 
       ok: 0, 

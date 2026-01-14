@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { calculateGCLLevel, calculateGPLLevel, formatNumber, RESOURCE_CATEGORIES } from '@/lib/screeps-api'
+import { calculateGCLLevel, calculateGPLLevel, formatNumber, RESOURCE_CATEGORIES } from '@/lib/screeps-common'
 import CustomSelect from '@/components/CustomSelect'
 
 const SHARDS = [

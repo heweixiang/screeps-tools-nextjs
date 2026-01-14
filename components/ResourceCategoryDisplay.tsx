@@ -1,4 +1,5 @@
-import { RESOURCE_CATEGORIES } from '@/lib/screeps-api'
+import { RESOURCE_CATEGORIES } from '@/lib/screeps-common'
+
 
 interface ResourceCategoryDisplayProps {
   shardResources: {
