@@ -63,12 +63,30 @@
 - 显示每个房间的最后战斗时间和距今 tick 数
 - 点击房间名可直接跳转到 Screeps 游戏界面
 
+### 🖥️ Screeps 控制台
+
+在网页中直接执行 Screeps 控制台命令：
+
+- 支持 Token 模式执行命令（Token 保存在浏览器 LocalStorage）
+- 支持常用 Token / 常用命令保存与一键切换
+- WebSocket 实时订阅 console 日志
+
+### 🧠 Memory 查看器
+
+查看 Screeps Memory（支持路径读取与高可读 JSON 展示）：
+
+- 支持按 path 读取（例如：`creeps`、`flags`、`rooms.W1N1`）
+- 以可折叠 JSON 树展示，支持复制字段
+- Token 无效会返回明确错误提示，不会一直卡在“获取中”
+- 为提升速度：后端仅代理请求，解压与 JSON 解析在前端完成
+
 ## 技术栈
 
 - **框架**: Next.js 15 (App Router)
 - **语言**: TypeScript 5
 - **样式**: Tailwind CSS 4
 - **运行时**: React 19
+- **Screeps API**: screeps-simple-api（部分工具）+ Next.js Route Handler 代理
 
 ## 本地开发
 
@@ -82,6 +100,13 @@ pnpm dev
 
 打开 [http://localhost:3000](http://localhost:3000) 查看。
 
+## Token 获取与安全说明
+
+- Screeps API Token 可在 Screeps 官网个人设置中生成（API Access / Token）
+- 本项目在浏览器端保存 Token（LocalStorage），仅用于向本项目后端接口发起请求
+- 后端会将请求代理到 `https://screeps.com/api/...`，避免跨域问题
+- 建议只在可信设备上使用；如怀疑泄露，请在 Screeps 端撤销并重新生成 Token
+
 ## 构建部署
 
 ```bash
@@ -94,21 +119,35 @@ pnpm start
 
 ## API 说明
 
-项目通过 `/api/screeps` 路由代理 Screeps 官方 API，支持以下操作：
+项目通过 Next.js 路由代理 Screeps 官方 API，前端只请求本站 `/api/...`：
 
 | Action | 描述 | 参数 |
 |--------|------|------|
-| `nukes` | 获取所有 Shard 的 Nuke 数据 | - |
-| `pvp` | 获取 PvP 战斗数据 | `interval` (ticks) |
-| `resources` | 获取玩家资源数据 | `username`, `shard` (可选) |
+| `/api/screeps` | 综合代理（资源 / nukes / pvp 等） | `action` 等（见实现） |
+| `/api/console` | 控制台代理（执行表达式、校验 Token） | `expression`, `shard` |
+| `/api/memory` | Memory 读取代理（返回 JSON，可能为 `gz:` 字符串） | `path`（可选）, `shard`（可选） |
+
+### Memory 读取建议
+
+- Memory 体积很大时，建议填写 `Memory 路径` 只取子树，例如：
+  - `creeps`
+  - `flags`
+  - `rooms.W1N1`
+- 读取接口返回的 `data` 可能是 `gz:` 开头的压缩串，本项目会在前端解压并展示
+  - 这样后端开销更小，响应更快
 
 ## 项目结构
 
 ```
 ├── app/
-│   ├── api/screeps/       # Screeps API 代理
+│   ├── api/
+│   │   ├── screeps/       # Screeps API 代理
+│   │   ├── console/       # Screeps 控制台代理
+│   │   └── memory/        # Screeps Memory 代理
 │   ├── tools/             # 工具页面
 │   │   ├── creep-designer/
+│   │   ├── console/
+│   │   ├── memory/
 │   │   ├── nuke-status/
 │   │   ├── player-resources/
 │   │   └── pvp-status/

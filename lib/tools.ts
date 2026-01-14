@@ -47,5 +47,13 @@ export const tools: Tool[] = [
     status: '可用',
     statusColor: 'green',
     href: '/tools/console'
+  },
+  {
+    id: 'memory',
+    name: 'Memory 查看器',
+    description: '查看 Screeps 内存数据，支持路径查询和 JSON 格式化展示。',
+    status: '可用',
+    statusColor: 'green',
+    href: '/tools/memory'
   }
 ]
